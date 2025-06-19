@@ -1,4 +1,7 @@
+import datetime
+import json
 import logging
+import os
 
 import pandas
 import pandas as pd
@@ -6,7 +9,7 @@ from pandas.core.interchange.dataframe_protocol import DataFrame
 
 from project_sys import PATH_HOME
 
-
+PATCH_FILE_EXCEL = os.path.join(PATH_HOME, "data", "operations.xlsx")
 path_ = f"{PATH_HOME}/logs/utils.log"
 logger = logging.getLogger("utils")
 file_handler = logging.FileHandler(path_, "w", encoding="utf-8")
@@ -47,11 +50,12 @@ def convert_dataf_listd(data_freme: DataFrame) -> list[dict]:
     try:
         logger.info(f"{legend_s}Принимаем data_freme для конвертации")
         date_files = data_freme.to_dict("records")
-        lists_key = list(date_files[0].keys())
+        #lists_key = list(date_files[0].keys())
         for dicts in date_files:
-            for keys in lists_key:
-                lists[keys] = str(dicts[keys])
-            list_dict.append(lists)
+            #for keys in lists_key:
+                #lists[keys] = str(dicts[keys])
+            #list_dict.append(lists)
+            list_dict.append(dicts)
         logger.info(f"{legend_s}Конвертация закончена успешно")
         return list_dict
     except ValueError as eror:
@@ -62,4 +66,39 @@ def convert_dataf_listd(data_freme: DataFrame) -> list[dict]:
         logger.critical(f"{legend_s}Критическая ошибка: {eror}")
         return []
 
+def operation_filter(dates_end:str)-> list:
+    ''' Функция принимает на вход строку с датой и временем в формате
+YYYY-MM-DD HH:MM:SS  и возвращает данные с начала месяца, на который
+выпадает входящая дата, по входящую дату.'''
+
+    data_freim = read_excels(PATCH_FILE_EXCEL)
+    transaction_date = convert_dataf_listd(data_freim)
+    ss = 0
+    ss2 = 0
+    dates_filtr = []
+    date_obj = datetime.datetime.strptime(dates_end, "%Y-%m-%d %H:%M:%S")
+    # опредилить месяц и дать дату начала фильтрации
+    for dates_n in transaction_date:
+        ss += 1
+        #if 0 < ss < 10 : print(dates_n)
+        time_date = datetime.datetime.strptime(dates_n['Дата операции'], "%d.%m.%Y %H:%M:%S")
+        if date_obj.year == time_date.year:
+            if date_obj.month == time_date.month:
+                if date_obj.day >= time_date.day:
+                    #print(dates_n)
+                    ss2 += 1
+                    dates_filtr.append(dates_n)
+
+    print('--------------')
+    print(ss2)
+    print(ss)
+    return dates_filtr
+
+def user_settings_read(fails:str = 'user_settings.json')->json:
+    '''Чтение файла пользовательских настроек по умолчанию: user_settings.json в корневом катологе'''
+
+    path_ = f"{PATH_HOME}/{fails}"
+    with open(path_) as f:
+        data = json.load(f)
+    return data
 
