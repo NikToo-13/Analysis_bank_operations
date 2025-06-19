@@ -14,29 +14,26 @@ logger.addHandler(file_handler)
 logger.setLevel(logging.DEBUG)
 
 def search_for_transfers_to_individuals(transactions:list) -> json:
-    '''--'''
+    '''Функция сервиса «Поиск переводов физическим лицам»'''
 
-    transactions_filtrs = []
-    for recordings in transactions:
-        if recordings["Категория"] =="Переводы":
-            text = str(recordings["Описание"])
-            if re.fullmatch(r'[А-ЯЁ][а-яё]+\s+[А-ЯЁ]{1}[.]', text):
-                #print(text)
-                transactions_filtrs.append(recordings)
-    individuals_json = json.dumps(transactions_filtrs, ensure_ascii=False)
-
-    return individuals_json
+    try:
+        legend_s = " Функция: search_for_transfers_to_individuals -> "
+        logger.info(f"{legend_s} Поиск переводов физическим лицам")
+        transactions_filtrs = []
+        for recordings in transactions:
+            if recordings["Категория"] =="Переводы":
+                text = str(recordings["Описание"])
+                if re.fullmatch(r'[А-ЯЁ][а-яё]+\s+[А-ЯЁ]{1}[.]', text):
+                    transactions_filtrs.append(recordings)
+        individuals_json = json.dumps(transactions_filtrs, ensure_ascii=False)
+        logger.info(f"{legend_s} Поиск выполнен успешно.")
+        return individuals_json
+    except Exception as eror:
+        logger.critical(f"{legend_s}Критическая ошибка: {eror}")
+        return json.dumps([], ensure_ascii=False)
 
 
 if __name__ == "__main__":
     transactions_period = operation_filter('2021-12-30 15:45:00')
-    #ss = 0
-    #for transactions in transactions_period:
-    #    ss += 1
-    #    if ss > 9 :
-    #        print(transactions)
-
     print("---------------------------------------------------")
-    wwwww = search_for_transfers_to_individuals(transactions_period)
-    print(wwwww)
-    #print(search_for_transfers_to_individuals(transactions_period))
+    print(search_for_transfers_to_individuals(transactions_period))

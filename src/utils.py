@@ -2,8 +2,6 @@ import datetime
 import json
 import logging
 import os
-
-import pandas
 import pandas as pd
 from pandas.core.interchange.dataframe_protocol import DataFrame
 
@@ -19,8 +17,9 @@ logger.addHandler(file_handler)
 logger.setLevel(logging.DEBUG)
 
 
-def read_excels(path_file: str) -> DataFrame:
+def read_excels(path_file: str) -> pd.DataFrame:
     """Функция принимает путь к файлу в виде строки. И возвращает объект: DataFrame."""
+
 
     try:
         legend_s = " Функция: read_excels -> "
@@ -28,7 +27,6 @@ def read_excels(path_file: str) -> DataFrame:
         date_freme = pd.read_excel(path_file)
         logger.info(f"{legend_s}Читаем файл: {path_file}")
         return date_freme
-
     except FileNotFoundError as eror:
         logger.error(f"{legend_s}Ошибка: {eror}")
         return []
@@ -44,61 +42,60 @@ def read_excels(path_file: str) -> DataFrame:
 def convert_dataf_listd(data_freme: DataFrame) -> list[dict]:
     """Функция конвертирует DataFrame в список словарей"""
 
-    legend_s = " Функция: convert_dataf_listd -> "
-    list_dict = []
-    lists = {}
     try:
+        legend_s = " Функция: convert_dataf_listd -> "
+        list_dict = []
         logger.info(f"{legend_s}Принимаем data_freme для конвертации")
         date_files = data_freme.to_dict("records")
-        #lists_key = list(date_files[0].keys())
         for dicts in date_files:
-            #for keys in lists_key:
-                #lists[keys] = str(dicts[keys])
-            #list_dict.append(lists)
             list_dict.append(dicts)
         logger.info(f"{legend_s}Конвертация закончена успешно")
         return list_dict
-    except ValueError as eror:
+    except Exception as eror:
         logger.error(f"{legend_s}Ошибка: {eror}")
-        return []
-    else:
-        eror = Exception
-        logger.critical(f"{legend_s}Критическая ошибка: {eror}")
         return []
 
 def operation_filter(dates_end:str)-> list:
     ''' Функция принимает на вход строку с датой и временем в формате
-YYYY-MM-DD HH:MM:SS  и возвращает данные с начала месяца, на который
-выпадает входящая дата, по входящую дату.'''
+        YYYY-MM-DD HH:MM:SS  и возвращает данные с начала месяца, на который
+        выпадает входящая дата, по входящую дату.'''
 
-    data_freim = read_excels(PATCH_FILE_EXCEL)
-    transaction_date = convert_dataf_listd(data_freim)
-    ss = 0
-    ss2 = 0
-    dates_filtr = []
-    date_obj = datetime.datetime.strptime(dates_end, "%Y-%m-%d %H:%M:%S")
-    # опредилить месяц и дать дату начала фильтрации
-    for dates_n in transaction_date:
-        ss += 1
-        #if 0 < ss < 10 : print(dates_n)
-        time_date = datetime.datetime.strptime(dates_n['Дата операции'], "%d.%m.%Y %H:%M:%S")
-        if date_obj.year == time_date.year:
-            if date_obj.month == time_date.month:
-                if date_obj.day >= time_date.day:
-                    #print(dates_n)
-                    ss2 += 1
-                    dates_filtr.append(dates_n)
 
-    print('--------------')
-    print(ss2)
-    print(ss)
-    return dates_filtr
+    try:
+        legend_s = " Функция: operation_filter -> "
+        logger.info(f"{legend_s} Принимаем data_freme для фильтрации по дате")
+        data_freim = read_excels(PATCH_FILE_EXCEL)
+        print(type(data_freim))
+        transaction_date = convert_dataf_listd(data_freim)
+        dates_filtr = []
+        date_obj = datetime.datetime.strptime(dates_end, "%Y-%m-%d %H:%M:%S")
+        # опредилить месяц и дать дату начала фильтрации
+        for dates_n in transaction_date:
+            time_date = datetime.datetime.strptime(dates_n['Дата операции'], "%d.%m.%Y %H:%M:%S")
+            if date_obj.year == time_date.year:
+                if date_obj.month == time_date.month:
+                    if date_obj.day >= time_date.day:
+                        dates_filtr.append(dates_n)
+        return dates_filtr
+    except Exception as eror:
+        logger.error(f"{legend_s}Ошибка: {eror}")
+        return []
 
 def user_settings_read(fails:str = 'user_settings.json')->json:
     '''Чтение файла пользовательских настроек по умолчанию: user_settings.json в корневом катологе'''
 
-    path_ = f"{PATH_HOME}/{fails}"
-    with open(path_) as f:
-        data = json.load(f)
-    return data
+    try:
+        legend_s = " Функция: user_settings_read -> "
+        list_dict = []
+        logger.info(f"{legend_s} Чтение файла пользовательских настроек")
+        path_ = f"{PATH_HOME}/{fails}"
+        with open(path_) as f:
+            data = json.load(f)
+        return data
+    except FileNotFoundError as eror:
+        logger.critical(f"{legend_s} Ошибка с файлом: {eror}")
+        return []
+    except Exception as eror:
+        logger.error(f"{legend_s}Ошибка: {eror}")
+        return []
 

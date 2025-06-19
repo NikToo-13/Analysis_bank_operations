@@ -132,6 +132,37 @@ views('2021-12-30 15:45:00')
                                 {'stock': 'TSLA', 'price': '1007.08'}]
                 }
 
+## Модуль: reports.py 
+Модуль отчетов
+
+spending_by_category(pd.DataFrame, str, Optional[str] = None): pd.DataFrame - Функция возвращает траты по заданной категории за последние три месяца (от переданной даты)
+
+```shell
+spending_by_category(date_frame, "Переводы", "2018-12-30 15:45:00")
+```
+*результат* -> 
+            Дата операции  ... Сумма операции с округлением
+5088  29.12.2018 23:10:23  ...                     70000.00
+5102  25.12.2018 09:21:48  ...                      5000.00
+5111  22.12.2018 21:52:33  ...                     10000.00
+............
+
+report(func) - Декоратор без входных значений записывает результат в файл report.xlsx
+
+```shell
+@report
+def spending_by_category(pd.DataFrame, str, Optional[str] = None) -> pd.DataFrame:
+```
+*результат* -> данные записываются в файл report.xlsx, корневой дириктории report проекта
+
+report_file(file) - Декоратор принимает имя файла в качестве параметра и записывает в него
+
+```shell
+@report_file(file)
+def spending_by_category(pd.DataFrame, str, Optional[str] = None) -> pd.DataFrame:
+```
+*результат* -> данные записываются в заданный файл в переменной file, корневой дириктории report проекта
+
 ## Документация:
 
 ## Лицензия: 
