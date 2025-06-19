@@ -132,7 +132,7 @@ views('2021-12-30 15:45:00')
                                 {'stock': 'TSLA', 'price': '1007.08'}]
                 }
 
-## Модуль: reports.py 
+## Модуль: repor.py 
 Модуль отчетов
 
 spending_by_category(pd.DataFrame, str, Optional[str] = None): pd.DataFrame - Функция возвращает траты по заданной категории за последние три месяца (от переданной даты)
