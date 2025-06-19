@@ -1,13 +1,10 @@
+import datetime
 import json
 import logging
-import datetime
 from typing import AnyStr
 
 from project_sys import PATH_HOME
-from src.utils import (
-    operation_filter,
-    user_settings_read,
-)
+from src.utils import operation_filter, user_settings_read
 
 path_ = f"{PATH_HOME}/logs/views.log"
 logger = logging.getLogger("views")

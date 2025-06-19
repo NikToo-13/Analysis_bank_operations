@@ -40,10 +40,6 @@ exclude = '''
 )
 '''
 
-[tool.isort.black]
-# максимальная длина строки
-line_length = 119
-
 [tool.iblack]
 # максимальная длина строки
 line_length = 119
