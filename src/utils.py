@@ -11,7 +11,9 @@ PATCH_FILE_EXCEL = os.path.join(PATH_HOME, "data", "operations.xlsx")
 path_ = f"{PATH_HOME}/logs/utils.log"
 logger = logging.getLogger("utils")
 file_handler = logging.FileHandler(path_, "w", encoding="utf-8")
-file_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s: %(message)s")
+file_formatter = logging.Formatter(
+    "%(asctime)s - %(name)s - %(levelname)s: %(message)s"
+)
 file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
 logger.setLevel(logging.DEBUG)
@@ -19,7 +21,6 @@ logger.setLevel(logging.DEBUG)
 
 def read_excels(path_file: str) -> pd.DataFrame:
     """Функция принимает путь к файлу в виде строки. И возвращает объект: DataFrame."""
-
 
     try:
         legend_s = " Функция: read_excels -> "
@@ -29,17 +30,17 @@ def read_excels(path_file: str) -> pd.DataFrame:
         return date_freme
     except FileNotFoundError as eror:
         logger.error(f"{legend_s}Ошибка: {eror}")
-        return []
+        return pd.DataFrame()
     except ValueError as eror:
         logger.error(f"{legend_s}Ошибка: {eror}")
-        return []
+        return pd.DataFrame()
     else:
         eror = Exception
         logger.critical(f"{legend_s}Критическая ошибка: {eror}")
-        return []
+        return pd.DataFrame()
 
 
-def convert_dataf_listd(data_freme: DataFrame) -> list[dict]:
+def convert_dataf_listd(data_freme: DataFrame) -> list:
     """Функция конвертирует DataFrame в список словарей"""
 
     try:
@@ -55,23 +56,24 @@ def convert_dataf_listd(data_freme: DataFrame) -> list[dict]:
         logger.error(f"{legend_s}Ошибка: {eror}")
         return []
 
-def operation_filter(dates_end:str)-> list:
-    ''' Функция принимает на вход строку с датой и временем в формате
-        YYYY-MM-DD HH:MM:SS  и возвращает данные с начала месяца, на который
-        выпадает входящая дата, по входящую дату.'''
 
+def operation_filter(dates_end: str) -> list:
+    """Функция принимает на вход строку с датой и временем в формате
+    YYYY-MM-DD HH:MM:SS  и возвращает данные с начала месяца, на который
+    выпадает входящая дата, по входящую дату."""
 
     try:
         legend_s = " Функция: operation_filter -> "
         logger.info(f"{legend_s} Принимаем data_freme для фильтрации по дате")
         data_freim = read_excels(PATCH_FILE_EXCEL)
-        print(type(data_freim))
         transaction_date = convert_dataf_listd(data_freim)
         dates_filtr = []
         date_obj = datetime.datetime.strptime(dates_end, "%Y-%m-%d %H:%M:%S")
         # опредилить месяц и дать дату начала фильтрации
         for dates_n in transaction_date:
-            time_date = datetime.datetime.strptime(dates_n['Дата операции'], "%d.%m.%Y %H:%M:%S")
+            time_date = datetime.datetime.strptime(
+                dates_n["Дата операции"], "%d.%m.%Y %H:%M:%S"
+            )
             if date_obj.year == time_date.year:
                 if date_obj.month == time_date.month:
                     if date_obj.day >= time_date.day:
@@ -81,12 +83,12 @@ def operation_filter(dates_end:str)-> list:
         logger.error(f"{legend_s}Ошибка: {eror}")
         return []
 
-def user_settings_read(fails:str = 'user_settings.json')->json:
-    '''Чтение файла пользовательских настроек по умолчанию: user_settings.json в корневом катологе'''
+
+def user_settings_read(fails: str = "user_settings.json") -> str:
+    """Чтение файла пользовательских настроек по умолчанию: user_settings.json в корневом катологе"""
 
     try:
         legend_s = " Функция: user_settings_read -> "
-        list_dict = []
         logger.info(f"{legend_s} Чтение файла пользовательских настроек")
         path_ = f"{PATH_HOME}/{fails}"
         with open(path_) as f:
@@ -94,8 +96,7 @@ def user_settings_read(fails:str = 'user_settings.json')->json:
         return data
     except FileNotFoundError as eror:
         logger.critical(f"{legend_s} Ошибка с файлом: {eror}")
-        return []
+        return ""
     except Exception as eror:
         logger.error(f"{legend_s}Ошибка: {eror}")
-        return []
-
+        return ""

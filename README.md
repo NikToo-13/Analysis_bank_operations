@@ -163,6 +163,7 @@ def spending_by_category(pd.DataFrame, str, Optional[str] = None) -> pd.DataFram
 ```
 *результат* -> данные записываются в заданный файл в переменной file, корневой дириктории report проекта
 
+
 ## Документация:
 
 ## Лицензия: 
