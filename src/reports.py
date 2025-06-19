@@ -7,7 +7,6 @@ from dateutil.relativedelta import relativedelta
 from project_sys import PATH_HOME
 from src.utils import read_excels, PATCH_FILE_EXCEL
 
-
 file = "report1.xlsx"
 path_ = f"{PATH_HOME}/logs/reports.log"
 logger = logging.getLogger("reports")
