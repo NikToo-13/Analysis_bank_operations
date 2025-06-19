@@ -168,4 +168,4 @@ def spending_by_category(pd.DataFrame, str, Optional[str] = None) -> pd.DataFram
 
 ## Лицензия: 
 
-Этот проект учебный!
+Этот проект учебный
